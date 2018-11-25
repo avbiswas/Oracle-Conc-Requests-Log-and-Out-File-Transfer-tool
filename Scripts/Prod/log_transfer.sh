@@ -1,61 +1,64 @@
 #!/bin/sh
 
-export transfer_path=/u03/erpprod/Monitoring_Scripts/log_transfer
-export APPLCSF_ERPPROD='/u03/erpprod/apps/apps_st/appl/APPLCSF';
+export transfer_path=/home/applmgr/log_transfer
+
+export APPLCSF_PPOST='/u01/ppost/apps/apps_st/appl/APPLCSF';
 cd $transfer_path
 
-if [  -e $transfer_path/.request_temp_erpprod ]; then
+if [ -e $transfer_path/.request_temp_ppost ]; then
         echo "Already Running"
         exit
 fi
 
-RUNNING=`ps -ef|grep '/u03/erpprod/Monitoring_Scripts/log_transfer/log_transfer.sh'|wc -l`
+RUNNING=`ps -ef|grep '/home/applmgr/log_transfer/log_transfer.sh'|wc -l`
 
 if [ $RUNNING -gt 4 ]; then
-echo "Already running!"
+echo "Already running"
 exit
 fi
 
-touch .sending_erpprod
+touch .sending
 
-lftp -u aerpdev,apperp00 sftp://ald-kaleb.posten.no <<commands
-cd /u01/apperpdev/PROD_LOGS
-put .sending_erpprod
-get .request_temp_erpprod
+lftp -u aamdev00,IM1ck3y sftp://ald-kaleb.posten.no <<commands
+cd /u01/appamdev00/PROD_LOGS
+put .sending
+get .request_temp_ppost
 exit
 commands
 
-if [ -e  $transfer_path/.request_temp_erpprod ]; then
-requests=($(awk '/ERPPROD/ {print $1}' $transfer_path/.request_temp_erpprod))
+
+
+if [ -e  $transfer_path/.request_temp_ppost ]; then
+requests=($(awk '/PPOST/ {print $1}' $transfer_path/.request_temp_ppost))
 declare cmd=''
 for request_id in ${requests[*]}
         do
-               cmd="$cmd $APPLCSF_ERPPROD/log/l$request_id.req $APPLCSF_ERPPROD/out/o$request_id.out"
+               cmd="$cmd $APPLCSF_PPOST/log/l$request_id.req $APPLCSF_PPOST/out/o$request_id.out"
         done
-
-cp $cmd $transfer_path/ERPPROD/
+cp $cmd $transfer_path/PPOST/
 echo $cmd
-touch $transfer_path/.file_transfer_successful_ERPPROD
+touch $transfer_path/.file_transfer_successful_ppost
 
-lftp -u aerpdev,apperp00 sftp://ald-kaleb.posten.no <<commands
-cd /u01/apperpdev/ERPPROD_LOGS/
-rm /u01/apperpdev/PROD_LOGS/.sending_erpprod
-put .file_transfer_successful_ERPPROD
-rm /u01/apperpdev/PROD_LOGS/.request_temp_erpprod
-mput ./ERPPROD/*
-
+lftp -u aamdev00,IM1ck3y sftp://ald-kaleb.posten.no <<commands
+cd /u01/appamdev00/PPOST_LOGS/
+mput ./PPOST/*
+put .file_transfer_successful_ppost
+rm /u01/appamdev00/PROD_LOGS/.request_temp_ppost
 exit
 commands
 
-rm $transfer_path/.request_temp_erpprod
-rm $transfer_path/ERPPROD/*
+rm $transfer_path/.request_temp_ppost
+rm $transfer_path/PPOST/*
 
 else
-lftp -u aerpdev,apperp00 sftp://ald-kaleb.posten.no <<commands
-rm /u01/apperpdev/PROD_LOGS/.sending_erpprod
+lftp -u aamdev00,IM1ck3y sftp://ald-kaleb.posten.no <<commands
+rm /u01/appamdev00/PROD_LOGS/.sending
 exit
 commands
 
-echo "No requests for ERPPROD"
+
+
+echo "No requests for PPOST"
 fi
+
 
