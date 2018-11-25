@@ -1,0 +1,4 @@
+*/3 * * * * /u01/appamdev00/PROD_LOGS/write_requests.sh >  /u01/appamdev00/PROD_LOGS/write_requests.log 2>/u01/appamdev00/PROD_LOGS/write_requests.err
+00 00 * * * find /u01/appamdev00/PPOST_LOGS -name '*.req' -mtime +1 -exec rm {} \;
+00 00 * * * find /u01/appamdev00/PPOST_LOGS -name '*.out' -mtime +1 -exec rm {} \;
+
