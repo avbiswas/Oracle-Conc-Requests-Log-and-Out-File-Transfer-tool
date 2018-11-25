@@ -19,7 +19,7 @@ fi
 
 touch .sending
 
-lftp -u aamdev00,IM1ck3y sftp://ald-kaleb.posten.no <<commands
+lftp -u aamdev00,**** sftp://ald-kaleb.posten.no <<commands
 cd /u01/appamdev00/PROD_LOGS
 put .sending
 get .request_temp_ppost
@@ -39,7 +39,7 @@ cp $cmd $transfer_path/PPOST/
 echo $cmd
 touch $transfer_path/.file_transfer_successful_ppost
 
-lftp -u aamdev00,IM1ck3y sftp://ald-kaleb.posten.no <<commands
+lftp -u aamdev00,**** sftp://ald-kaleb.posten.no <<commands
 cd /u01/appamdev00/PPOST_LOGS/
 mput ./PPOST/*
 put .file_transfer_successful_ppost
@@ -51,7 +51,7 @@ rm $transfer_path/.request_temp_ppost
 rm $transfer_path/PPOST/*
 
 else
-lftp -u aamdev00,IM1ck3y sftp://ald-kaleb.posten.no <<commands
+lftp -u aamdev00,**** sftp://ald-kaleb.posten.no <<commands
 rm /u01/appamdev00/PROD_LOGS/.sending
 exit
 commands
